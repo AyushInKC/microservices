@@ -38,3 +38,4 @@ build/
 .DS_Store
 ### Ignore all Spring Boot application configs ###
 application-*.yml
+application.yml
