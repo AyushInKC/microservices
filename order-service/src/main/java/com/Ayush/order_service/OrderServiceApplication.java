@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @EnableEncryptableProperties
-@EnableEurekaServer
 public class OrderServiceApplication {
 
 	public static void main(String[] args) {
