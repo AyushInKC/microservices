@@ -20,7 +20,7 @@ import java.util.UUID;
 @Transactional
 public class OrderService {
    private final OrderRepository orderRepository;
-   private final WebClient webClient;
+   private final WebClient.Builder webClientBuilder;
     public void placeOrder(OrderRequest orderRequest){
         Order order=new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
@@ -38,12 +38,14 @@ public class OrderService {
 
 
         //Checking for the items in inventory if yes then place the order using WebClient for synchronous communication
-        InventoryResponse[] inventoryResponseArray=webClient.get()
+        InventoryResponse[] inventoryResponseArray = webClientBuilder.build()
+                .get()
                 .uri("http://inventory-service/api/inventory",
                         uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
                 .retrieve()
                 .bodyToMono(InventoryResponse[].class)
                 .block();
+
         //--> block() used for to make WebFlux synchronous
 
         assert inventoryResponseArray != null;
@@ -57,11 +59,11 @@ public class OrderService {
     }
     }
 
-    private OrderLineItems mapToDto(OrderLineItemsDto orderLineItemsDto) {
-     OrderLineItems orderLineItems=new OrderLineItems();
-     orderLineItems.setPrice(orderLineItems.getPrice());
-     orderLineItems.setQuantity(orderLineItems.getQuantity());
-     orderLineItems.setSkuCode(orderLineItems.getSkuCode());
-     return orderLineItems;
+    private OrderLineItems mapToDto(OrderLineItemsDto dto) {
+        OrderLineItems oli = new OrderLineItems();
+        oli.setPrice(dto.getPrice());
+        oli.setQuantity(dto.getQuantity());
+        oli.setSkuCode(dto.getSkuCode());
+        return oli;
     }
 }
